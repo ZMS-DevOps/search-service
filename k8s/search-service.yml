@@ -1,0 +1,59 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: search
+#  namespace: backend
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: search
+  template:
+    metadata:
+      labels:
+        app: search
+        sidecar.istio.io/inject: "true"
+    spec:
+      containers:
+        - name: search
+          image: devopszms2024/zms-devops-search-service:latest
+          imagePullPolicy: Always
+          ports:
+            - containerPort: 8080
+          envFrom:
+            - secretRef:
+                name: mongo-secret
+          env:
+            - name: DB_HOST
+              valueFrom:
+                configMapKeyRef:
+                  name: mongo-configmap
+                  key: db-host
+            - name: DB_PORT
+              valueFrom:
+                configMapKeyRef:
+                  name: mongo-configmap
+                  key: db-port
+            - name: SERVICE_PORT
+              valueFrom:
+                configMapKeyRef:
+                  name: search-configmap
+                  key: SERVICE_PORT
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: search
+#  namespace: backend
+spec:
+  selector:
+    app: search
+  ports:
+    - protocol: TCP
+      name: http
+      port: 80
+      targetPort: 8080
+    - protocol: TCP
+      name: grpc
+      port: 8001
+      targetPort: 8001

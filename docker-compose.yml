@@ -1,0 +1,28 @@
+version: "3.8"
+
+services:
+  hotel_service:
+    image: hotel_service
+    container_name: hotel_service
+    build:
+      context: .
+      dockerfile: Dockerfile
+    restart: on-failure
+    environment:
+      DB_HOST: ${DB_HOST}
+      DB_PORT: ${DB_PORT}
+      MONGO_INITDB_ROOT_USERNAME: ${MONGO_INITDB_ROOT_USERNAME}
+      MONGO_INITDB_ROOT_PASSWORD: ${MONGO_INITDB_ROOT_PASSWORD}
+      SERVICE_PORT: ${SERVICE_PORT}
+    ports:
+      - 8000:8000
+    depends_on:
+      - hotel_db
+
+  hotel_db:
+    image: mongo
+    container_name: hotel_db
+    restart: on-failure
+    environment:
+      MONGO_INITDB_ROOT_USERNAME: ${MONGO_INITDB_ROOT_USERNAME}
+      MONGO_INITDB_ROOT_PASSWORD: ${MONGO_INITDB_ROOT_PASSWORD}

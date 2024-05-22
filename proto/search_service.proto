@@ -1,0 +1,50 @@
+syntax = "proto3";
+
+option go_package = "proto/search";
+
+package search;
+
+service SearchService{
+  rpc AddAccommodation(AddAccommodationRequest) returns(AddAccommodationResponse) {}
+  rpc EditAccommodation(EditAccommodationRequest) returns(EditAccommodationResponse) {}
+  rpc DeleteAccommodation(DeleteAccommodationRequest) returns(DeleteAccommodationResponse) {}
+}
+
+message DeleteAccommodationRequest {
+  string accommodationId = 1;
+}
+
+message DeleteAccommodationResponse {
+}
+
+message Accommodation {
+  string accommodationId = 1;
+  string name = 2;
+  string location = 3;
+  string mainPhoto = 4;
+  int32 minGuestNumber = 5;
+  int32 maxGuestNumber = 6;
+  float defaultPrice = 7;
+  string priceType = 8;
+  repeated SpecialPrice specialPrice = 9;
+}
+
+message EditAccommodationRequest {
+  Accommodation accommodation = 1;
+}
+
+message EditAccommodationResponse {
+}
+
+message AddAccommodationRequest {
+    Accommodation accommodation = 1;
+}
+
+message AddAccommodationResponse {
+}
+
+message SpecialPrice {
+  float price = 1;
+  string startDate = 2;
+  string endDate = 3;
+}
