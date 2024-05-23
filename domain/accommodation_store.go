@@ -2,6 +2,7 @@ package domain
 
 import (
 	"go.mongodb.org/mongo-driver/bson/primitive"
+	"time"
 )
 
 type AccommodationStore interface {
@@ -16,4 +17,5 @@ type AccommodationStore interface {
 	UpdateSpecialPrice(id primitive.ObjectID, newSpecialPrices []SpecialPrice) error
 	//UpdateTypeOfPayment(id primitive.ObjectID, typeOfPayment *string) error
 	GetSpecialPrices(id primitive.ObjectID) ([]SpecialPrice, error)
+	Search(location string, guestNumber int, startDate time.Time, endDate time.Time, minPrice float32, maxPrice float32) ([]*SearchResponse, error)
 }

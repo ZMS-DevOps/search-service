@@ -35,7 +35,21 @@ Inside the container execute `curl http://hotel:8083/hotels` (hotel jer je to na
 ```shell
  curl http://search/search/health
 
- curl http://search/search/search
+ curl http://search/search/search/all
+ 
+ curl --location 'http://search/search/search/all' \
+--header 'Content-Type: application/json' \
+--data '{
+    "location": "Tropical Paradise",
+    "guest_number": 3,
+    "start": "2024-05-15T00:00:00Z",
+    "end": "2024-05-21T00:00:00Z",
+    "min_price": 200.0,
+    "max_price": 250000.0
+}'
+
+ 
+ 
  curl http://search/search/search -H "Authorization: Bearer eyJhbGciOiJSUzI1NiIsInR5cCIgOiAiSldUIiwia2lkIiA6ICI0dTVBams0XzF5ZHI4SFREVk5MUFp1RVV5SERIS2ZmbDR4clNoYnZpbUxVIn0.eyJleHAiOjE3MTY0MDQxMDEsImlhdCI6MTcxNjQwMzgwMSwianRpIjoiZjAxNmI2ZmUtOTc3Yy00YTk1LTk2NDAtYTVkYTAwMjJjZGM3IiwiaXNzIjoiaHR0cDovL2tleWNsb2FrLmRlZmF1bHQuc3ZjLmNsdXN0ZXIubG9jYWw6ODA4MC9yZWFsbXMvSXN0aW8iLCJhdWQiOiJhY2NvdW50Iiwic3ViIjoiYzk0ZmFhNDItMGM3Ni00NWQzLWFhOTktMDhlODZhZjRmMjczIiwidHlwIjoiQmVhcmVyIiwiYXpwIjoiSXN0aW8iLCJzZXNzaW9uX3N0YXRlIjoiNDc5ZTQxYjUtYzgzZi00M2EwLTgxNmQtNjIzMjI0NGU0ZDliIiwiYWNyIjoiMSIsImFsbG93ZWQtb3JpZ2lucyI6WyIvKiJdLCJyZWFsbV9hY2Nlc3MiOnsicm9sZXMiOlsib2ZmbGluZV9hY2Nlc3MiLCJhZG1pbiIsInVtYV9hdXRob3JpemF0aW9uIiwiZGVmYXVsdC1yb2xlcy1pc3RpbyJdfSwicmVzb3VyY2VfYWNjZXNzIjp7ImFjY291bnQiOnsicm9sZXMiOlsibWFuYWdlLWFjY291bnQiLCJtYW5hZ2UtYWNjb3VudC1saW5rcyIsInZpZXctcHJvZmlsZSJdfX0sInNjb3BlIjoiZW1haWwgcHJvZmlsZSIsInNpZCI6IjQ3OWU0MWI1LWM4M2YtNDNhMC04MTZkLTYyMzIyNDRlNGQ5YiIsImVtYWlsX3ZlcmlmaWVkIjp0cnVlLCJuYW1lIjoiTWlsYW4gQWpkZXIiLCJwcmVmZXJyZWRfdXNlcm5hbWUiOiJob3RlbC1hZG1pbiIsImdpdmVuX25hbWUiOiJNaWxhbiIsImZhbWlseV9uYW1lIjoiQWpkZXIiLCJlbWFpbCI6ImFqZGVyLm1pbGFuMjAwMEBnbWFpbC5jb20ifQ.VU_KMZ8txMfaD8NGx9x88ca-4-SRyofjBXkTqWn3X3sBPSwmog1udh4s-B3JTugWxmYnxLCeVszn_70wsWDGZyrksNqv1QZ-0rZVN_WDCd5w6PFxKTXXFJcjQ1L4yhGsdL-sk6h-Z4CccYqEZg_RVw39DAGDYt_JOWb_QU0G-IDDwrwXzhWdjhIewmx1RdZH37OKMN3HbFV35-GU2Usn7JlhodG6sUw_5zz2Llu94A9AbIQ8EDDTsHYNR2YVlnJm9L-Un0pxTkwmLd_dCrEFSXWjrWEfxtRo_Z6SaNzJTklLczU9uHlfP_NNzVv6QklxttgVsDfUQhjBdYODXM-iGg" 
  
  curl http://hotel/hotel/accommodation/6643cacecd082bc7c053b3d5
@@ -106,3 +120,4 @@ Create hotel-user , hotel-admin (password: test)
 
 docker build -t devopszms2024/zms-devops-search-service .
 docker push devopszms2024/zms-devops-search-service
+kubectl replace --force -f k8s/search-service.yml

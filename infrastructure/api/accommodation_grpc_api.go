@@ -31,3 +31,7 @@ func (handler *AccommodationGrpcHandler) AddAccommodation(ctx context.Context, r
 	}
 	return &pb.AddAccommodationResponse{}, nil
 }
+
+func (handler *AccommodationGrpcHandler) GetHealth(ctx context.Context, request *pb.HealtRequest) (*pb.HealtResponse, error) {
+	return &pb.HealtResponse{}, nil
+}

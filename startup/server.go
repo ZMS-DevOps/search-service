@@ -41,10 +41,6 @@ func (server *Server) Start() {
 	log.Fatal(http.ListenAndServe(fmt.Sprintf(":%s", server.config.Port), server.router))
 }
 
-func (server *Server) getBookingAddress() string {
-	return fmt.Sprintf("%s:%s", server.config.BookingHost, server.config.BookingPort)
-}
-
 func (server *Server) initMongoClient() *mongo.Client {
 	client, err := persistence.GetClient(server.config.HotelDBUsername, server.config.HotelDBPassword, server.config.HotelDBHost, server.config.HotelDBPort)
 	if err != nil {

@@ -10,7 +10,7 @@ spec:
     - to:
         - operation:
             methods: [ "GET", "PUT", "POST", "DELETE" ]
-            paths: [ "/search/health", "/search/search*", "/search/search/**" ]
+            paths: [ "/search.SearchService/*", "/search/health", "/search/search*", "/search/search/**" ]
 #    - to:
 #        - operation:
 #            methods: [ "GET", "PUT", "POST", "DELETE" ]

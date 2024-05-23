@@ -10,6 +10,7 @@ type Accommodation struct {
 	Name         string             `bson:"name"`
 	Location     string             `bson:"location"`
 	MainPhoto    string             `bson:"main_photo"`
+	Rating       float32            `bson:"rating"`
 	GuestNumber  GuestNumber        `bson:"guest_number"`
 	DefaultPrice DefaultPrice       `bson:"default_price"`
 	SpecialPrice []SpecialPrice     `bson:"special_price"`

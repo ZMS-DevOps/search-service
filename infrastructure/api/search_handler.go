@@ -5,6 +5,7 @@ import (
 	"fmt"
 	"github.com/ZMS-DevOps/search-service/application"
 	"github.com/ZMS-DevOps/search-service/domain"
+	"github.com/ZMS-DevOps/search-service/infrastructure/dto"
 	"github.com/gorilla/mux"
 	"net/http"
 )
@@ -13,9 +14,14 @@ type SearchHandler struct {
 	service *application.SearchService
 }
 
-type SearchResponse struct {
+type GetAllResponse struct {
 	//Search *domain.Search `json:"search"`
 	Accommodations []*domain.Accommodation `json:"accommodations"`
+}
+
+type SearchResponse struct {
+	//Search *domain.Search `json:"search"`
+	Accommodations []*domain.SearchResponse `json:"accommodations"`
 }
 
 type HealthCheckResponse struct {
@@ -30,8 +36,8 @@ func NewSearchHandler(service *application.SearchService) *SearchHandler {
 }
 
 func (handler *SearchHandler) Init(router *mux.Router) {
-	router.HandleFunc(`/search/search`, handler.GetAll).Methods("GET")
-	//router.HandleFunc("/hotel/search/{id}", handler.GetById).Methods("GET")
+	router.HandleFunc(`/search/search/all`, handler.GetAll).Methods("GET")
+	router.HandleFunc("/search/search/all", handler.Search).Methods("POST")
 	//router.HandleFunc("/hotel/search", handler.Add).Methods("POST")
 	//router.HandleFunc("/hotel/search/{id}", handler.Update).Methods("PUT")
 	//router.HandleFunc("/hotel/search/{id}", handler.Delete).Methods("DELETE")
@@ -47,6 +53,41 @@ func (handler *SearchHandler) GetAll(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
+	response := GetAllResponse{
+		Accommodations: accommodations,
+	}
+
+	jsonResponse, err := json.Marshal(response)
+	if err != nil {
+		w.WriteHeader(http.StatusInternalServerError)
+		return
+	}
+	w.WriteHeader(http.StatusOK)
+	w.Write(jsonResponse)
+}
+
+func (handler *SearchHandler) Search(w http.ResponseWriter, r *http.Request) {
+	var searchDto dto.SearchDto
+	if err := json.NewDecoder(r.Body).Decode(&searchDto); err != nil {
+		handleError(w, http.StatusBadRequest, "Invalid request payload")
+		return
+	}
+
+	// Validate the updated accommodation DTO
+	if err := dto.ValidateSearch(searchDto); err != nil {
+		handleError(w, http.StatusBadRequest, err.Error())
+		return
+	}
+
+	accommodations, err := handler.service.Search(
+		searchDto.Location, searchDto.GuestNumber, searchDto.Start, searchDto.End,
+		searchDto.MinPrice, searchDto.MaxPrice)
+
+	if err != nil {
+		w.WriteHeader(http.StatusInternalServerError)
+		return
+	}
+
 	response := SearchResponse{
 		Accommodations: accommodations,
 	}
@@ -56,6 +97,7 @@ func (handler *SearchHandler) GetAll(w http.ResponseWriter, r *http.Request) {
 		w.WriteHeader(http.StatusInternalServerError)
 		return
 	}
+
 	w.WriteHeader(http.StatusOK)
 	w.Write(jsonResponse)
 }

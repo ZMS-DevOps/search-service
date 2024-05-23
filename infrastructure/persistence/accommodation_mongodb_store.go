@@ -6,6 +6,7 @@ import (
 	"go.mongodb.org/mongo-driver/bson"
 	"go.mongodb.org/mongo-driver/bson/primitive"
 	"go.mongodb.org/mongo-driver/mongo"
+	"time"
 )
 
 const (
@@ -22,6 +23,77 @@ func NewAccommodationMongoDBStore(client *mongo.Client) domain.AccommodationStor
 	return &AccommodationMongoDBStore{
 		accommodations: accommodations,
 	}
+}
+
+func (store *AccommodationMongoDBStore) Search(location string, guestNumber int, startDate time.Time, endDate time.Time, minPrice float32, maxPrice float32) ([]*domain.SearchResponse, error) {
+	pipeline := bson.A{
+		bson.M{"$match": bson.M{
+			"location":         location,
+			"guest_number.min": bson.M{"$lte": guestNumber},
+			"guest_number.max": bson.M{"$gte": guestNumber},
+		}},
+		bson.M{"$addFields": bson.M{
+			"total_price": bson.M{
+				"$sum": bson.A{
+					calculateDailyPrices(startDate, endDate, guestNumber),
+				},
+			},
+			"number_of_quests": bson.M{
+				"$toInt": guestNumber,
+			},
+		}},
+		bson.M{"$match": bson.M{
+			"total_price": bson.M{"$gte": minPrice, "$lte": maxPrice},
+		}},
+	}
+
+	cursor, err := store.accommodations.Aggregate(context.TODO(), pipeline)
+	if err != nil {
+		return nil, err
+	}
+	defer cursor.Close(context.TODO())
+
+	var accommodations []*domain.SearchResponse
+	if err = cursor.All(context.TODO(), &accommodations); err != nil {
+		return nil, err
+	}
+
+	return accommodations, nil
+}
+
+func calculateDailyPrices(startDate time.Time, endDate time.Time, guestNumber int) bson.A {
+	days := int(endDate.Sub(startDate).Hours() / 24)
+	dailyPrices := bson.A{}
+
+	for i := 0; i < days; i++ {
+		date := startDate.Add(time.Hour * 24 * time.Duration(i))
+		dailyPrices = append(dailyPrices, bson.M{
+			"$cond": bson.M{
+				"if": bson.M{
+					"$and": bson.A{
+						bson.M{"$gte": bson.A{date, "$special_price.date_range.start"}},
+						bson.M{"$lte": bson.A{date, "$special_price.date_range.end"}},
+					},
+				},
+				"then": bson.M{
+					"$cond": bson.M{
+						"if":   bson.M{"$eq": bson.A{"$default_price.type", domain.PerGuest}},
+						"then": bson.M{"$multiply": bson.A{"$special_price.price", guestNumber}},
+						"else": "$special_price.price",
+					},
+				},
+				"else": bson.M{
+					"$cond": bson.M{
+						"if":   bson.M{"$eq": bson.A{"$default_price.type", domain.PerGuest}},
+						"then": bson.M{"$multiply": bson.A{"$default_price.price", guestNumber}},
+						"else": "$default_price.price",
+					},
+				},
+			},
+		})
+	}
+
+	return dailyPrices
 }
 
 func (store *AccommodationMongoDBStore) Get(id primitive.ObjectID) (*domain.Accommodation, error) {

@@ -23,8 +23,9 @@ const _ = grpc.SupportPackageIsVersion7
 // For semantics around ctx use and closing/ending streaming RPCs, please refer to https://pkg.go.dev/google.golang.org/grpc/?tab=doc#ClientConn.NewStream.
 type SearchServiceClient interface {
 	AddAccommodation(ctx context.Context, in *AddAccommodationRequest, opts ...grpc.CallOption) (*AddAccommodationResponse, error)
-	EditAccommodation(ctx context.Context, in *EditAccommodationRequest, opts ...grpc.CallOption) (*EditAccommodationResponse, error)
-	DeleteAccommodation(ctx context.Context, in *DeleteAccommodationRequest, opts ...grpc.CallOption) (*DeleteAccommodationResponse, error)
+	// rpc EditAccommodation(EditAccommodationRequest) returns(EditAccommodationResponse) {}
+	// rpc DeleteAccommodation(DeleteAccommodationRequest) returns(DeleteAccommodationResponse) {}
+	GetHealth(ctx context.Context, in *HealtRequest, opts ...grpc.CallOption) (*HealtResponse, error)
 }
 
 type searchServiceClient struct {
@@ -44,18 +45,9 @@ func (c *searchServiceClient) AddAccommodation(ctx context.Context, in *AddAccom
 	return out, nil
 }
 
-func (c *searchServiceClient) EditAccommodation(ctx context.Context, in *EditAccommodationRequest, opts ...grpc.CallOption) (*EditAccommodationResponse, error) {
-	out := new(EditAccommodationResponse)
-	err := c.cc.Invoke(ctx, "/search.SearchService/EditAccommodation", in, out, opts...)
-	if err != nil {
-		return nil, err
-	}
-	return out, nil
-}
-
-func (c *searchServiceClient) DeleteAccommodation(ctx context.Context, in *DeleteAccommodationRequest, opts ...grpc.CallOption) (*DeleteAccommodationResponse, error) {
-	out := new(DeleteAccommodationResponse)
-	err := c.cc.Invoke(ctx, "/search.SearchService/DeleteAccommodation", in, out, opts...)
+func (c *searchServiceClient) GetHealth(ctx context.Context, in *HealtRequest, opts ...grpc.CallOption) (*HealtResponse, error) {
+	out := new(HealtResponse)
+	err := c.cc.Invoke(ctx, "/search.SearchService/GetHealth", in, out, opts...)
 	if err != nil {
 		return nil, err
 	}
@@ -67,8 +59,9 @@ func (c *searchServiceClient) DeleteAccommodation(ctx context.Context, in *Delet
 // for forward compatibility
 type SearchServiceServer interface {
 	AddAccommodation(context.Context, *AddAccommodationRequest) (*AddAccommodationResponse, error)
-	EditAccommodation(context.Context, *EditAccommodationRequest) (*EditAccommodationResponse, error)
-	DeleteAccommodation(context.Context, *DeleteAccommodationRequest) (*DeleteAccommodationResponse, error)
+	// rpc EditAccommodation(EditAccommodationRequest) returns(EditAccommodationResponse) {}
+	// rpc DeleteAccommodation(DeleteAccommodationRequest) returns(DeleteAccommodationResponse) {}
+	GetHealth(context.Context, *HealtRequest) (*HealtResponse, error)
 	mustEmbedUnimplementedSearchServiceServer()
 }
 
@@ -79,11 +72,8 @@ type UnimplementedSearchServiceServer struct {
 func (UnimplementedSearchServiceServer) AddAccommodation(context.Context, *AddAccommodationRequest) (*AddAccommodationResponse, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method AddAccommodation not implemented")
 }
-func (UnimplementedSearchServiceServer) EditAccommodation(context.Context, *EditAccommodationRequest) (*EditAccommodationResponse, error) {
-	return nil, status.Errorf(codes.Unimplemented, "method EditAccommodation not implemented")
-}
-func (UnimplementedSearchServiceServer) DeleteAccommodation(context.Context, *DeleteAccommodationRequest) (*DeleteAccommodationResponse, error) {
-	return nil, status.Errorf(codes.Unimplemented, "method DeleteAccommodation not implemented")
+func (UnimplementedSearchServiceServer) GetHealth(context.Context, *HealtRequest) (*HealtResponse, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method GetHealth not implemented")
 }
 func (UnimplementedSearchServiceServer) mustEmbedUnimplementedSearchServiceServer() {}
 
@@ -116,38 +106,20 @@ func _SearchService_AddAccommodation_Handler(srv interface{}, ctx context.Contex
 	return interceptor(ctx, in, info, handler)
 }
 
-func _SearchService_EditAccommodation_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
-	in := new(EditAccommodationRequest)
+func _SearchService_GetHealth_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(HealtRequest)
 	if err := dec(in); err != nil {
 		return nil, err
 	}
 	if interceptor == nil {
-		return srv.(SearchServiceServer).EditAccommodation(ctx, in)
+		return srv.(SearchServiceServer).GetHealth(ctx, in)
 	}
 	info := &grpc.UnaryServerInfo{
 		Server:     srv,
-		FullMethod: "/search.SearchService/EditAccommodation",
+		FullMethod: "/search.SearchService/GetHealth",
 	}
 	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
-		return srv.(SearchServiceServer).EditAccommodation(ctx, req.(*EditAccommodationRequest))
-	}
-	return interceptor(ctx, in, info, handler)
-}
-
-func _SearchService_DeleteAccommodation_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
-	in := new(DeleteAccommodationRequest)
-	if err := dec(in); err != nil {
-		return nil, err
-	}
-	if interceptor == nil {
-		return srv.(SearchServiceServer).DeleteAccommodation(ctx, in)
-	}
-	info := &grpc.UnaryServerInfo{
-		Server:     srv,
-		FullMethod: "/search.SearchService/DeleteAccommodation",
-	}
-	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
-		return srv.(SearchServiceServer).DeleteAccommodation(ctx, req.(*DeleteAccommodationRequest))
+		return srv.(SearchServiceServer).GetHealth(ctx, req.(*HealtRequest))
 	}
 	return interceptor(ctx, in, info, handler)
 }
@@ -164,12 +136,8 @@ var SearchService_ServiceDesc = grpc.ServiceDesc{
 			Handler:    _SearchService_AddAccommodation_Handler,
 		},
 		{
-			MethodName: "EditAccommodation",
-			Handler:    _SearchService_EditAccommodation_Handler,
-		},
-		{
-			MethodName: "DeleteAccommodation",
-			Handler:    _SearchService_DeleteAccommodation_Handler,
+			MethodName: "GetHealth",
+			Handler:    _SearchService_GetHealth_Handler,
 		},
 	},
 	Streams:  []grpc.StreamDesc{},

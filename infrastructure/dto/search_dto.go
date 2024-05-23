@@ -9,12 +9,14 @@ import (
 
 type SearchDto struct {
 	Location    string    `json:"location"`
-	GuestNumber int       `json:"guest_number" validate:"min=2"`
+	GuestNumber int       `json:"guest_number" validate:"min=1"`
 	Start       time.Time `json:"start"`
 	End         time.Time `json:"end" validate:"gtefield=Start"`
+	MinPrice    float32   `json:"min_price" validate:"min=0.01"`
+	MaxPrice    float32   `json:"max_price" validate:"min=0.01,gtfield=MinPrice"`
 }
 
-func ValidateStruct(dto SearchDto) error {
+func ValidateSearch(dto SearchDto) error {
 	var validate = validator.New()
 	err := validate.Struct(dto)
 	if err != nil {
