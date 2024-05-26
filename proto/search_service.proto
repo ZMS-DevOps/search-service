@@ -6,15 +6,8 @@ package search;
 
 service SearchService{
   rpc AddAccommodation(AddAccommodationRequest) returns(AddAccommodationResponse) {}
-//  rpc EditAccommodation(EditAccommodationRequest) returns(EditAccommodationResponse) {}
-//  rpc DeleteAccommodation(DeleteAccommodationRequest) returns(DeleteAccommodationResponse) {}
-  rpc GetHealth(HealtRequest) returns(HealtResponse) {}
-}
-
-message HealtRequest {
-}
-
-message HealtResponse {
+  rpc EditAccommodation(EditAccommodationRequest) returns(EditAccommodationResponse) {}
+  rpc DeleteAccommodation(DeleteAccommodationRequest) returns(DeleteAccommodationResponse) {}
 }
 
 message DeleteAccommodationRequest {

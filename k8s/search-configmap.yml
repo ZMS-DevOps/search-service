@@ -5,3 +5,4 @@ metadata:
 #  namespace: backend
 data:
   SERVICE_PORT: "8080"
+  GRPC_PORT: "8002"

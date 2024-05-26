@@ -120,4 +120,5 @@ Create hotel-user , hotel-admin (password: test)
 
 docker build -t devopszms2024/zms-devops-search-service .
 docker push devopszms2024/zms-devops-search-service
+kubectl replace --force -f k8s/search-configmap.yml
 kubectl replace --force -f k8s/search-service.yml

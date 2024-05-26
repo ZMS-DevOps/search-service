@@ -39,6 +39,11 @@ spec:
                 configMapKeyRef:
                   name: search-configmap
                   key: SERVICE_PORT
+            - name: GRPC_PORT
+              valueFrom:
+                configMapKeyRef:
+                  name: search-configmap
+                  key: GRPC_PORT
 ---
 apiVersion: v1
 kind: Service
