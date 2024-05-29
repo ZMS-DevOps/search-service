@@ -16,7 +16,7 @@ func NewAccommodationService(store domain.AccommodationStore) *AccommodationServ
 }
 
 func (service *AccommodationService) AddAccommodation(accommodation domain.Accommodation) error {
-	return service.store.Insert(&accommodation)
+	return service.store.InsertWithId(&accommodation)
 }
 
 func (service *AccommodationService) GetAll() ([]*domain.Accommodation, error) {

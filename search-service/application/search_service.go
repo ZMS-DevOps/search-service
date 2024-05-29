@@ -1,19 +1,21 @@
 package application
 
 import (
+	booking "github.com/ZMS-DevOps/booking-service/proto"
 	"github.com/ZMS-DevOps/search-service/domain"
-	//"github.com/ZMS-DevOps/search-service/infrastructure/dto"
 	"go.mongodb.org/mongo-driver/bson/primitive"
 	"time"
 )
 
 type SearchService struct {
-	store domain.AccommodationStore
+	store         domain.AccommodationStore
+	bookingClient booking.BookingServiceClient
 }
 
-func NewSearchService(store domain.AccommodationStore) *SearchService {
+func NewSearchService(store domain.AccommodationStore, bookingClient booking.BookingServiceClient) *SearchService {
 	return &SearchService{
-		store: store,
+		store:         store,
+		bookingClient: bookingClient,
 	}
 }
 
@@ -27,8 +29,15 @@ func (service *SearchService) GetAll() ([]*domain.Accommodation, error) {
 
 func (service *SearchService) Search(location string, guestNumber int, startTime time.Time, endTime time.Time, minPrice float32, maxPrice float32) ([]*domain.SearchResponse, error) {
 	accommodation, err := service.store.Search(location, guestNumber, startTime, endTime, minPrice, maxPrice)
-
+	accommodation, err = service.bookingClient.FilterAvailableAccommodation(getIds(accommodation), startTime, endTime)
 	return accommodation, err
+}
+
+func getIds(response []domain.SearchResponse) {
+	accommodationIDs := make([]string, len(response))
+	for i, searchResponse := range response {
+		accommodationIDs[i] = searchResponse.Id.Hex()
+	}
 }
 
 //func CalculateTotalPrice(accommodation domain.Accommodation, start, end time.Time, numPeople int) float32 {

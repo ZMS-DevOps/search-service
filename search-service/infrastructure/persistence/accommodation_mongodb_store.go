@@ -147,6 +147,8 @@ func (store *AccommodationMongoDBStore) Update(id primitive.ObjectID, accommodat
 		{"main_photo", accommodation.MainPhoto},
 		{"guest_number", accommodation.GuestNumber},
 		{"default_price", accommodation.DefaultPrice},
+		{"rating", accommodation.Rating},
+		{"special_price", accommodation.SpecialPrice},
 	}
 	update := bson.D{{"$set", updateFields}}
 

@@ -2,8 +2,10 @@ module github.com/ZMS-DevOps/search-service
 go 1.17
 
 // replace github.com/tamararankovic/microservices_demo/common => ../common
+replace github.com/ZMS-DevOps/booking-service => ./../../../booking-service/booking-service
 
 require (
+	github.com/ZMS-DevOps/booking-service v1.0.0
 	github.com/go-playground/validator/v10 v10.20.0
 	github.com/gorilla/mux v1.8.1
 	github.com/grpc-ecosystem/grpc-gateway/v2 v2.9.0

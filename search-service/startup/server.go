@@ -3,6 +3,7 @@ package startup
 import (
 	"fmt"
 	"github.com/ZMS-DevOps/search-service/application"
+	"github.com/ZMS-DevOps/search-service/application/external"
 	"github.com/ZMS-DevOps/search-service/domain"
 	"github.com/ZMS-DevOps/search-service/infrastructure/api"
 	"github.com/ZMS-DevOps/search-service/infrastructure/persistence"
@@ -31,6 +32,7 @@ func NewServer(config *config.Config) *Server {
 
 func (server *Server) Start() {
 	mongoClient := server.initMongoClient()
+	bookingClient := external.NewBookingClient(server.getBookingAddress())
 	accommodationStore := server.initAccommodationStore(mongoClient)
 	searchService := server.initSearchService(accommodationStore)
 	searchHandler := server.initSearchHandler(searchService)
@@ -39,6 +41,10 @@ func (server *Server) Start() {
 	accommodationGrpcHandler := server.initAccommodationGrpcHandler(accommodationService)
 	go server.startGrpcServer(accommodationGrpcHandler)
 	log.Fatal(http.ListenAndServe(fmt.Sprintf(":%s", server.config.Port), server.router))
+}
+
+func (server *Server) getBookingAddress() string {
+	return fmt.Sprintf("%s:%s", server.config.BookingHost, server.config.BookingPort)
 }
 
 func (server *Server) initMongoClient() *mongo.Client {

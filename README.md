@@ -34,18 +34,18 @@ kubectl run -it --rm  --image curlimages/curl:8.00.1 curl -- sh
 Inside the container execute `curl http://hotel:8083/hotels` (hotel jer je to naziv servisa)
 ```shell
  curl http://search/search/health
-
+665337ede5acebe3a513149f
  curl http://search/search/search/all
  
  curl --location 'http://search/search/search/all' \
 --header 'Content-Type: application/json' \
 --data '{
-    "location": "Tropical Paradise",
-    "guest_number": 3,
+    "location": "Location",
+    "guest_number": 1,
     "start": "2024-05-15T00:00:00Z",
-    "end": "2024-05-21T00:00:00Z",
+    "end": "2024-05-16T00:00:00Z",
     "min_price": 200.0,
-    "max_price": 250000.0
+    "max_price": 100000.0
 }'
 
  

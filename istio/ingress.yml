@@ -1,33 +1,19 @@
 apiVersion: networking.istio.io/v1alpha3
 kind: VirtualService
 metadata:
-  name: search-virtual-service
+  namespace: backend
+  name: search
 spec:
   hosts:
     - "*"
   gateways:
-    - search-gateway
+    - api-gateway
   http:
     - match:
         - uri:
             prefix: "/search"
       route:
         - destination:
-            host: search.default.svc.cluster.local
+            host: search.backend.svc.cluster.local
             port:
-              number: 80
----
-apiVersion: networking.istio.io/v1alpha3
-kind: Gateway
-metadata:
-  name: search-gateway
-spec:
-  selector:
-    istio: ingressgateway
-  servers:
-    - port:
-        number: 80
-        name: search
-        protocol: HTTP
-      hosts:
-        - "*"
+              number: 8085

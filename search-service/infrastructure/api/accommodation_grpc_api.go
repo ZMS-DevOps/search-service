@@ -60,7 +60,7 @@ func (handler *AccommodationGrpcHandler) EditAccommodation(ctx context.Context, 
 	fmt.Println("Stop 1")
 	mappedAccommodation := dto.MapAccommodation(accommodationId, accommodation)
 	fmt.Println("Stop 2")
-
+	fmt.Println("mappedAccommodation ", mappedAccommodation)
 	if err := handler.service.EditAccommodation(*mappedAccommodation); err != nil {
 		return nil, fmt.Errorf("error editting accommodation: %v", err)
 	}

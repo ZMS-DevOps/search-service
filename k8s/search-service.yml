@@ -2,7 +2,7 @@ apiVersion: apps/v1
 kind: Deployment
 metadata:
   name: search
-#  namespace: backend
+  namespace: backend
 spec:
   replicas: 1
   selector:
@@ -19,31 +19,14 @@ spec:
           image: devopszms2024/zms-devops-search-service:latest
           imagePullPolicy: Always
           ports:
-            - containerPort: 8080
+            - containerPort: 8085
           envFrom:
             - secretRef:
-                name: mongo-secret
-          env:
-            - name: DB_HOST
-              valueFrom:
-                configMapKeyRef:
-                  name: mongo-configmap
-                  key: db-host
-            - name: DB_PORT
-              valueFrom:
-                configMapKeyRef:
-                  name: mongo-configmap
-                  key: db-port
-            - name: SERVICE_PORT
-              valueFrom:
-                configMapKeyRef:
-                  name: search-configmap
-                  key: SERVICE_PORT
-            - name: GRPC_PORT
-              valueFrom:
-                configMapKeyRef:
-                  name: search-configmap
-                  key: GRPC_PORT
+                name: mongodb-search-secret
+            - configMapRef:
+                name: search-configmap
+            - configMapRef:
+                name: mongodb-search-configmap
 ---
 apiVersion: v1
 kind: Service
@@ -56,8 +39,8 @@ spec:
   ports:
     - protocol: TCP
       name: http
-      port: 80
-      targetPort: 8080
+      port: 8085
+      targetPort: 8085
     - protocol: TCP
       name: grpc
       port: 8002
