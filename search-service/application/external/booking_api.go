@@ -1,13 +1,10 @@
 package external
 
 import (
-	"context"
 	booking "github.com/ZMS-DevOps/booking-service/proto"
-	"go.mongodb.org/mongo-driver/bson/primitive"
 	"google.golang.org/grpc"
 	"google.golang.org/grpc/credentials/insecure"
 	"log"
-	"time"
 )
 
 func NewBookingClient(address string) booking.BookingServiceClient {
@@ -22,10 +19,10 @@ func getConnection(address string) (*grpc.ClientConn, error) {
 	return grpc.Dial(address, grpc.WithTransportCredentials(insecure.NewCredentials()))
 }
 
-func FilterAvailableAccommodation(bookingClient booking.BookingServiceClient, ids []primitive.ObjectID, startDate time.Time, endDate time.Time) (*booking.FilterAvailableAccommodationResponse, error) {
-	accommodationIDs := make([]string, len(ids))
-	for i, id := range ids {
-		accommodationIDs[i] = id.Hex()
-	}
-	return bookingClient.FilterAvailableAccommodation(context.TODO(), &booking.FilterAvailableAccommodationRequest{AccommodationIds: accommodationIDs, StartDate: startDate.Format(time.RFC3339), EndDate: endDate.Format(time.RFC3339)})
-}
+//func FilterAvailableAccommodation(bookingClient booking.BookingServiceClient, ids []primitive.ObjectID, startDate time.Time, endDate time.Time) (*booking.FilterAvailableAccommodationResponse, error) {
+//	accommodationIDs := make([]string, len(ids))
+//	for i, id := range ids {
+//		accommodationIDs[i] = id.Hex()
+//	}
+//	return bookingClient.FilterAvailableAccommodation(context.TODO(), &booking.FilterAvailableAccommodationRequest{AccommodationIds: accommodationIDs, StartDate: startDate.Format(time.RFC3339), EndDate: endDate.Format(time.RFC3339)})
+//}

@@ -3,7 +3,6 @@ package startup
 import (
 	"fmt"
 	"github.com/ZMS-DevOps/search-service/application"
-	"github.com/ZMS-DevOps/search-service/application/external"
 	"github.com/ZMS-DevOps/search-service/domain"
 	"github.com/ZMS-DevOps/search-service/infrastructure/api"
 	"github.com/ZMS-DevOps/search-service/infrastructure/persistence"
@@ -31,21 +30,25 @@ func NewServer(config *config.Config) *Server {
 }
 
 func (server *Server) Start() {
+	fmt.Println("cao")
 	mongoClient := server.initMongoClient()
-	bookingClient := external.NewBookingClient(server.getBookingAddress())
+	//bookingClient := external.NewBookingClient(server.getBookingAddress())// todo
 	accommodationStore := server.initAccommodationStore(mongoClient)
 	searchService := server.initSearchService(accommodationStore)
 	searchHandler := server.initSearchHandler(searchService)
 	searchHandler.Init(server.router)
 	accommodationService := server.initAccommodationService(accommodationStore)
 	accommodationGrpcHandler := server.initAccommodationGrpcHandler(accommodationService)
+	fmt.Println("trci1")
 	go server.startGrpcServer(accommodationGrpcHandler)
+	fmt.Println("trci2")
+	fmt.Println(fmt.Sprintf(":%s", server.config.Port), server.router)
 	log.Fatal(http.ListenAndServe(fmt.Sprintf(":%s", server.config.Port), server.router))
 }
 
-func (server *Server) getBookingAddress() string {
-	return fmt.Sprintf("%s:%s", server.config.BookingHost, server.config.BookingPort)
-}
+//func (server *Server) getBookingAddress() string {
+//	return fmt.Sprintf("%s:%s", server.config.BookingHost, server.config.BookingPort)
+//}// todo
 
 func (server *Server) initMongoClient() *mongo.Client {
 	client, err := persistence.GetClient(server.config.HotelDBUsername, server.config.HotelDBPassword, server.config.HotelDBHost, server.config.HotelDBPort)
@@ -80,7 +83,7 @@ func (server *Server) startGrpcServer(bookingHandler *api.AccommodationGrpcHandl
 }
 
 func (server *Server) initSearchService(store domain.AccommodationStore) *application.SearchService {
-	return application.NewSearchService(store)
+	return application.NewSearchService(store, nil) // todo
 }
 
 func (server *Server) initAccommodationService(store domain.AccommodationStore) *application.AccommodationService {

@@ -4,5 +4,5 @@ metadata:
   name: mongodb-search-configmap
   namespace: backend
 data:
-  db-host: "mongodb-service"
-  db-port: "27017"
+  DB_HOST: "mongodb-search"
+  DB_PORT: "27017"

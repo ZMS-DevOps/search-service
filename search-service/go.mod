@@ -2,7 +2,7 @@ module github.com/ZMS-DevOps/search-service
 go 1.17
 
 // replace github.com/tamararankovic/microservices_demo/common => ../common
-replace github.com/ZMS-DevOps/booking-service => ./../../../booking-service/booking-service
+//replace github.com/ZMS-DevOps/booking-service => ./../../../booking-service/booking-service
 
 require (
 	github.com/ZMS-DevOps/booking-service v1.0.0

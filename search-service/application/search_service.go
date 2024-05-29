@@ -29,7 +29,7 @@ func (service *SearchService) GetAll() ([]*domain.Accommodation, error) {
 
 func (service *SearchService) Search(location string, guestNumber int, startTime time.Time, endTime time.Time, minPrice float32, maxPrice float32) ([]*domain.SearchResponse, error) {
 	accommodation, err := service.store.Search(location, guestNumber, startTime, endTime, minPrice, maxPrice)
-	accommodation, err = service.bookingClient.FilterAvailableAccommodation(getIds(accommodation), startTime, endTime)
+	//accommodation, err = service.bookingClient.FilterAvailableAccommodation(getIds(accommodation), startTime, endTime)
 	return accommodation, err
 }
 
