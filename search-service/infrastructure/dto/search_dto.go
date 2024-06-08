@@ -9,11 +9,11 @@ import (
 
 type SearchDto struct {
 	Location    string    `json:"location"`
-	GuestNumber int       `json:"guest_number" validate:"min=1"`
+	GuestNumber int       `json:"guest_number" validate:"omitempty,min=1"`
 	Start       time.Time `json:"start"`
 	End         time.Time `json:"end" validate:"gtefield=Start"`
-	MinPrice    float32   `json:"min_price" validate:"min=0.01"`
-	MaxPrice    float32   `json:"max_price" validate:"min=0.01,gtfield=MinPrice"`
+	MinPrice    float32   `json:"min_price" validate:"omitempty,min=0"`
+	MaxPrice    float32   `json:"max_price" validate:"omitempty,min=0,gtfield=MinPrice"`
 }
 
 func ValidateSearch(dto SearchDto) error {

@@ -21,8 +21,27 @@ func MapAccommodation(accommodationId primitive.ObjectID, accommodationDto *sear
 	return accommodation
 }
 
+//
+//func MapToSearchAccommodationResponse(accommodations []*domain.Accommodation) []*AccommodationResponse {
+//	var responses []*AccommodationResponse
+//
+//	for _, accommodation := range accommodations {
+//		response := &AccommodationResponse{
+//			Id:             accommodation.Id.Hex(),
+//			Name:           accommodation.Name,
+//			Location:       accommodation.Location,
+//			NumberOfGuests: accommodation.GuestNumber,
+//			MainPhoto:      accommodation.MainPhoto,
+//			Rating:         accommodation.Rating,
+//			TotalPrice:     accommodation.DefaultPrice.Price,
+//		}
+//		responses = append(responses, response)
+//	}
+//
+//	return responses
+//}
+
 func mapSpecialPrice(prices []*search.SpecialPrice) []domain.SpecialPrice {
-	fmt.Println("ccc")
 	if prices == nil {
 		return nil
 	}
@@ -54,9 +73,7 @@ func mapSpecialPrice(prices []*search.SpecialPrice) []domain.SpecialPrice {
 }
 
 func mapDefaultPrice(price float32, priceTypeName string) *domain.DefaultPrice {
-	fmt.Println("aaa")
 	var priceType, _ = mapPriceType(&priceTypeName)
-	fmt.Println("bbb")
 	return &domain.DefaultPrice{
 		Price: price,
 		Type:  *priceType,
@@ -72,15 +89,11 @@ func mapPriceType(priceTypeName *string) (*domain.PricingType, error) {
 		priceType = domain.PerGuest
 	default:
 		return &priceType, nil // todo
-		//default:
-		//	return nil, fmt.Errorf("invalid pricing type: %s", *priceTypeName)
 	}
 	return &priceType, nil
 }
 
 func mapGuestNumber(min int, max int) *domain.GuestNumber {
-	fmt.Println(min)
-	fmt.Println(max)
 	return &domain.GuestNumber{
 		Min: min,
 		Max: max,

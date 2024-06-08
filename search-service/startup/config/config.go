@@ -9,6 +9,8 @@ type Config struct {
 	HotelDBPort     string
 	HotelDBUsername string
 	HotelDBPassword string
+	BookingHost     string
+	BookingPort     string
 }
 
 func NewConfig() *Config {
@@ -19,5 +21,7 @@ func NewConfig() *Config {
 		HotelDBPort:     os.Getenv("DB_PORT"),
 		HotelDBUsername: os.Getenv("MONGO_INITDB_ROOT_USERNAME"),
 		HotelDBPassword: os.Getenv("MONGO_INITDB_ROOT_PASSWORD"),
+		BookingHost:     os.Getenv("BOOKING_HOST"),
+		BookingPort:     os.Getenv("BOOKING_PORT"),
 	}
 }

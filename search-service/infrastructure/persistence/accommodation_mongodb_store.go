@@ -25,26 +25,37 @@ func NewAccommodationMongoDBStore(client *mongo.Client) domain.AccommodationStor
 	}
 }
 
-func (store *AccommodationMongoDBStore) Search(location string, guestNumber int, startDate time.Time, endDate time.Time, minPrice float32, maxPrice float32) ([]*domain.SearchResponse, error) {
-	pipeline := bson.A{
-		bson.M{"$match": bson.M{
-			"location":         location,
+func (store *AccommodationMongoDBStore) Search(location string, guestNumber int, startDate, endDate time.Time, minPrice, maxPrice float32) ([]*domain.SearchResponse, error) {
+	pipeline := bson.A{}
+
+	if location != "" {
+		pipeline = append(pipeline, bson.M{"$match": bson.M{"location": location}})
+	}
+
+	if guestNumber > 0 {
+		pipeline = append(pipeline, bson.M{"$match": bson.M{
 			"guest_number.min": bson.M{"$lte": guestNumber},
 			"guest_number.max": bson.M{"$gte": guestNumber},
-		}},
-		bson.M{"$addFields": bson.M{
-			"total_price": bson.M{
-				"$sum": bson.A{
-					calculateDailyPrices(startDate, endDate, guestNumber),
-				},
-			},
-			"number_of_quests": bson.M{
-				"$toInt": guestNumber,
-			},
-		}},
-		bson.M{"$match": bson.M{
-			"total_price": bson.M{"$gte": minPrice, "$lte": maxPrice},
-		}},
+		}})
+	}
+
+	dailyPrices := calculateDailyPrices(startDate, endDate, guestNumber)
+	pipeline = append(pipeline, bson.M{"$addFields": bson.M{
+		"daily_prices": dailyPrices,
+		"total_price": bson.M{
+			"$sum": dailyPrices,
+		},
+	}})
+
+	if minPrice > 0 || maxPrice > 0 {
+		priceMatch := bson.M{}
+		if minPrice > 0 {
+			priceMatch["$gte"] = minPrice
+		}
+		if maxPrice > 0 {
+			priceMatch["$lte"] = maxPrice
+		}
+		pipeline = append(pipeline, bson.M{"$match": bson.M{"total_price": priceMatch}})
 	}
 
 	cursor, err := store.accommodations.Aggregate(context.TODO(), pipeline)
@@ -67,30 +78,43 @@ func calculateDailyPrices(startDate time.Time, endDate time.Time, guestNumber in
 
 	for i := 0; i < days; i++ {
 		date := startDate.Add(time.Hour * 24 * time.Duration(i))
-		dailyPrices = append(dailyPrices, bson.M{
-			"$cond": bson.M{
-				"if": bson.M{
-					"$and": bson.A{
-						bson.M{"$gte": bson.A{date, "$special_price.date_range.start"}},
-						bson.M{"$lte": bson.A{date, "$special_price.date_range.end"}},
+		dayPrice := bson.M{
+			"$reduce": bson.M{
+				"input": bson.M{
+					"$ifNull": bson.A{
+						"$special_price",
+						bson.A{},
 					},
 				},
-				"then": bson.M{
-					"$cond": bson.M{
-						"if":   bson.M{"$eq": bson.A{"$default_price.type", domain.PerGuest}},
-						"then": bson.M{"$multiply": bson.A{"$special_price.price", guestNumber}},
-						"else": "$special_price.price",
-					},
-				},
-				"else": bson.M{
+				"initialValue": bson.M{
 					"$cond": bson.M{
 						"if":   bson.M{"$eq": bson.A{"$default_price.type", domain.PerGuest}},
 						"then": bson.M{"$multiply": bson.A{"$default_price.price", guestNumber}},
 						"else": "$default_price.price",
 					},
 				},
+				"in": bson.M{
+					"$cond": bson.M{
+						"if": bson.M{
+							"$and": bson.A{
+								bson.M{"$gte": bson.A{date, "$$this.date_range.start"}},
+								bson.M{"$lte": bson.A{date, "$$this.date_range.end"}},
+							},
+						},
+						"then": bson.M{
+							"$cond": bson.M{
+								"if":   bson.M{"$eq": bson.A{"$$this.type", domain.PerGuest}},
+								"then": bson.M{"$multiply": bson.A{"$$this.price", guestNumber}},
+								"else": "$$this.price",
+							},
+						},
+						"else": "$$value",
+					},
+				},
 			},
-		})
+		}
+
+		dailyPrices = append(dailyPrices, dayPrice)
 	}
 
 	return dailyPrices
