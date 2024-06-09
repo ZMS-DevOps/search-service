@@ -1,38 +1,17 @@
-# Start from the latest golang base image
-FROM golang:1.22.1 as builder
-
-# Set the Current Working Directory inside the container
-WORKDIR /app
-
-# Copy go mod and sum files
-COPY go.mod ./go.sum ./
-
-# # Copy the local dependency
-# COPY /common ../common
-
-# Download all dependencies. Dependencies will be cached if the go.mod and go.sum files are not changed
+FROM golang:1.22.1-alpine AS builder
+RUN apk add --no-progress --no-cache gcc musl-dev
+WORKDIR /build
+COPY ./go.mod ./go.sum ./
 RUN go mod download
+COPY . .
 
-# Copy everything from the current directory to the Working Directory inside the container
-COPY .. .
+RUN go build -tags musl -ldflags '-extldflags "-static"' -o /build/main
 
-# Build the Go app
-RUN CGO_ENABLED=0 GOOS=linux go build -a -installsuffix cgo -o main .
-
-
-
-######## Start a new stage from scratch #######
-FROM alpine:latest
-
-WORKDIR /root/
-
-# Copy the Pre-built binary file from the previous stage
-COPY --from=builder /app/main .
+FROM alpine:3.20
+WORKDIR /app
+COPY --from=builder /build/main .
 RUN addgroup -S appgroup && adduser -S appuser -G appgroup
-RUN chown root:root /root/main && chmod 755 /root/main
-RUN chmod 555 /root/main
-# Expose port 8000 to the outside world
-EXPOSE 8083
+RUN chown appuser:appgroup /app/main && chmod 555 /app/main
+
 USER appuser
-# Command to run the executable
-CMD ["./main"]
+ENTRYPOINT ["/app/main"]

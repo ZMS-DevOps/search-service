@@ -18,4 +18,5 @@ type AccommodationStore interface {
 	//UpdateTypeOfPayment(id primitive.ObjectID, typeOfPayment *string) error
 	GetSpecialPrices(id primitive.ObjectID) ([]SpecialPrice, error)
 	Search(location string, guestNumber int, startDate time.Time, endDate time.Time, minPrice float32, maxPrice float32) ([]*SearchResponse, error)
+	UpdateRating(accommodationId primitive.ObjectID, rating float32) error
 }

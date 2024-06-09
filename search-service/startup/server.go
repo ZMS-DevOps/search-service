@@ -19,8 +19,11 @@ import (
 )
 
 type Server struct {
-	config *config.Config
-	router *mux.Router
+	config                   *config.Config
+	router                   *mux.Router
+	SearchHandler            *api.SearchHandler
+	AccommodationGrpcHandler *api.AccommodationGrpcHandler
+	AccommodationHandler     *api.AccommodationHandler
 }
 
 func NewServer(config *config.Config) *Server {
@@ -28,10 +31,11 @@ func NewServer(config *config.Config) *Server {
 		config: config,
 		router: mux.NewRouter(),
 	}
+	server.SearchHandler, server.AccommodationGrpcHandler, server.AccommodationHandler = server.setupHandlers()
 	return server
 }
 
-func (server *Server) Start() {
+func (server *Server) setupHandlers() (*api.SearchHandler, *api.AccommodationGrpcHandler, *api.AccommodationHandler) {
 	mongoClient := server.initMongoClient()
 	bookingClient := external.NewBookingClient(server.getBookingAddress())
 	accommodationStore := server.initAccommodationStore(mongoClient)
@@ -40,7 +44,12 @@ func (server *Server) Start() {
 	searchHandler.Init(server.router)
 	accommodationService := server.initAccommodationService(accommodationStore)
 	accommodationGrpcHandler := server.initAccommodationGrpcHandler(accommodationService)
-	go server.startGrpcServer(accommodationGrpcHandler)
+	accommodationHandler := server.initAccommodationHandler(accommodationService)
+	return searchHandler, accommodationGrpcHandler, accommodationHandler
+}
+
+func (server *Server) Start() {
+	go server.startGrpcServer(server.AccommodationGrpcHandler)
 	fmt.Println(fmt.Sprintf(":%s", server.config.Port), server.router)
 	log.Fatal(http.ListenAndServe(fmt.Sprintf(":%s", server.config.Port), server.router))
 }
@@ -95,4 +104,8 @@ func (server *Server) initSearchHandler(service *application.SearchService) *api
 
 func (server *Server) initAccommodationGrpcHandler(service *application.AccommodationService) *api.AccommodationGrpcHandler {
 	return api.NewAccommodationGrpcHandler(service)
+}
+
+func (server *Server) initAccommodationHandler(service *application.AccommodationService) *api.AccommodationHandler {
+	return api.NewAccommodationHandler(service)
 }
