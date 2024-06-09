@@ -54,5 +54,6 @@ func main() {
 			handlerFunc(msg)
 		}
 	}()
+
 	server.Start()
 }

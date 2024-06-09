@@ -2,9 +2,6 @@ module github.com/ZMS-DevOps/search-service
 
 go 1.22
 
-// replace github.com/tamararankovic/microservices_demo/common => ../common
-//replace github.com/ZMS-DevOps/booking-service => ./../../../booking-service/booking-service/booking-service
-
 require (
 	github.com/ZMS-DevOps/booking-service v1.0.7
 	github.com/confluentinc/confluent-kafka-go/v2 v2.4.0

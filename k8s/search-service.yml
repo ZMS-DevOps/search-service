@@ -32,6 +32,7 @@ spec:
               value: "my-kafka.backend.svc.cluster.local:9092"
             - name: KAFKA_AUTH_PASSWORD
               value: "6DUnElt7GW"
+
 ---
 apiVersion: v1
 kind: Service
