@@ -11,7 +11,7 @@ var accommodations = []*domain.Accommodation{
 		Name:         "Wailea Beach Resort",
 		Location:     "Hawaii",
 		MainPhoto:    "photo1.jpg",
-		Rating:       0, // Assuming initial rating is 0, update as necessary
+		Rating:       0,
 		GuestNumber:  domain.GuestNumber{Min: 2, Max: 6},
 		DefaultPrice: domain.DefaultPrice{Price: 500.00, Type: domain.PerApartmentUnit},
 		SpecialPrice: []domain.SpecialPrice{},
