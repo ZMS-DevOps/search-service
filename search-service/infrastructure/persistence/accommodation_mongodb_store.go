@@ -72,6 +72,21 @@ func (store *AccommodationMongoDBStore) Search(location string, guestNumber int,
 	return accommodations, nil
 }
 
+func (store *AccommodationMongoDBStore) UpdateRating(accommodationId primitive.ObjectID, rating float32) error {
+	filter := bson.M{"_id": accommodationId}
+
+	updateFields := bson.D{
+		{"rating", rating},
+	}
+	update := bson.D{{"$set", updateFields}}
+
+	_, err := store.accommodations.UpdateOne(context.TODO(), filter, update)
+	if err != nil {
+		return err
+	}
+	return nil
+}
+
 func calculateDailyPrices(startDate time.Time, endDate time.Time, guestNumber int) bson.A {
 	days := int(endDate.Sub(startDate).Hours() / 24)
 	dailyPrices := bson.A{}
@@ -171,7 +186,6 @@ func (store *AccommodationMongoDBStore) Update(id primitive.ObjectID, accommodat
 		{"main_photo", accommodation.MainPhoto},
 		{"guest_number", accommodation.GuestNumber},
 		{"default_price", accommodation.DefaultPrice},
-		{"rating", accommodation.Rating},
 		{"special_price", accommodation.SpecialPrice},
 	}
 	update := bson.D{{"$set", updateFields}}
