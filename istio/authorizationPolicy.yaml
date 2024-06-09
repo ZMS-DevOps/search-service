@@ -1,0 +1,25 @@
+apiVersion: security.istio.io/v1beta1
+kind: AuthorizationPolicy
+metadata:
+  namespace: backend
+  name: search
+spec:	
+  selector:
+    matchLabels:
+       app: search
+  rules:
+    - to:
+        - operation:
+            methods: [ "GET", "PUT", "POST", "DELETE" ]
+            paths: [ "/search.SearchService/*", "/search/health", "/search/*", "/search/search*", "/search/search/**" ]
+#    - to:
+#        - operation:
+#            methods: [ "GET", "PUT", "POST", "DELETE" ]
+#            paths: [ "/search/search*", "/search/search/**" ]
+#      from:
+#        - source:
+#              requestPrincipals: [ "*" ]
+#      when:
+#        - key: request.auth.claims[realm_access][roles]
+#          values: [ "admin" ]
+

@@ -1,0 +1,10 @@
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: search-configmap
+  namespace: backend
+data:
+  SERVICE_PORT: "8085"
+  GRPC_PORT: "8002"
+  BOOKING_HOST: "booking"
+  BOOKING_PORT: "8001"

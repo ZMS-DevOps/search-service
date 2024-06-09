@@ -1,0 +1,50 @@
+name: "Pull Request - search service"
+on:
+ workflow_dispatch:
+ pull_request:
+   types: [opened, reopened, synchronize]
+   paths:
+     - 'search-service/**'
+     - '.github/workflows/**'
+
+concurrency:
+ group: ${{ github.workflow }}-${{ github.ref }}
+ cancel-in-progress: true
+
+jobs:
+ build:
+   name: "Build"
+   runs-on: ubuntu-latest
+   steps:
+     - name: Checkout
+       uses: actions/checkout@v4
+
+     - name: Setup Go
+       uses: actions/setup-go@v5
+       with:
+        go-version-file: 'search-service/go.mod'
+        check-latest: true
+        cache-dependency-path: |
+          search-service/go.mod
+  
+     - uses: actions/cache@v4
+       with:
+        path: |
+          ~/.cache/go-build
+          ~/go/pkg/mod
+        key: ${{ runner.os }}-go-${{ hashFiles('**/search-service/go.sum') }}
+        restore-keys: |
+          ${{ runner.os }}-go-
+
+     - name: Install dependencies
+       working-directory: search-service
+       run: go get .
+
+     - name: Build
+       working-directory: search-service
+       run: go build -v ./...
+
+     - name: Test
+       working-directory: search-service
+       run: go test -v ./...
+       
