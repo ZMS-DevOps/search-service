@@ -1,9 +1,9 @@
 FROM golang:1.22.1-alpine AS builder
 RUN apk add --no-progress --no-cache gcc musl-dev
 WORKDIR /build
-COPY ./go.mod ./go.sum ./
+COPY go.mod ./go.sum ./
 RUN go mod download
-COPY . .
+COPY search-service .
 
 RUN go build -tags musl -ldflags '-extldflags "-static"' -o /build/main
 
