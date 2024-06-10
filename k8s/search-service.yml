@@ -16,7 +16,7 @@ spec:
     spec:
       containers:
         - name: search
-          image: devopszms2024/zms-devops-search-service:3.20.5
+          image: devopszms2024/zms-devops-search-service:latest
           imagePullPolicy: Always
           ports:
             - containerPort: 8085
