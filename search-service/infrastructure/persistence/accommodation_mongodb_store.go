@@ -184,6 +184,7 @@ func (store *AccommodationMongoDBStore) Update(id primitive.ObjectID, accommodat
 		{"name", accommodation.Name},
 		{"location", accommodation.Location},
 		{"main_photo", accommodation.MainPhoto},
+		{"host_id", accommodation.HostId},
 		{"guest_number", accommodation.GuestNumber},
 		{"default_price", accommodation.DefaultPrice},
 		{"special_price", accommodation.SpecialPrice},

@@ -118,9 +118,9 @@ Create hotel-user , hotel-admin (password: test)
 ```
 
 
-docker build -t devopszms2024/zms-devops-search-service .
-docker push devopszms2024/zms-devops-search-service
-kubectl -n backend replace --force -f ../k8s
+docker build -t devopszms2024/zms-devops-search-service:3.20.5 .
+docker push devopszms2024/zms-devops-search-service:3.20.5
+kubectl -n backend replace --force -f k8s
 kubectl -n backend replace --force -f istio
 kubectl replace --force -f k8s/search-service.yml
 kubectl get pods -n backend -w

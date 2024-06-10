@@ -16,7 +16,7 @@ spec:
     spec:
       containers:
         - name: search
-          image: devopszms2024/zms-devops-search-service:latest
+          image: devopszms2024/zms-devops-search-service:3.20.5
           imagePullPolicy: Always
           ports:
             - containerPort: 8085
@@ -31,7 +31,7 @@ spec:
             - name: KAFKA_BOOTSTRAP_SERVERS
               value: "my-kafka.backend.svc.cluster.local:9092"
             - name: KAFKA_AUTH_PASSWORD
-              value: "6DUnElt7GW"
+              value: "pOajD5BMEf"
 
 ---
 apiVersion: v1

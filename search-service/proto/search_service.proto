@@ -27,6 +27,7 @@ message Accommodation {
   float defaultPrice = 7;
   string priceType = 8;
   repeated SpecialPrice specialPrice = 9;
+  string hostId = 10;
 }
 
 message EditAccommodationRequest {
