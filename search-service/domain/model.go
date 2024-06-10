@@ -8,6 +8,7 @@ import (
 type Accommodation struct {
 	Id           primitive.ObjectID `bson:"_id"`
 	Name         string             `bson:"name"`
+	HostId       string             `bson:"host_id"`
 	Location     string             `bson:"location"`
 	MainPhoto    string             `bson:"main_photo"`
 	Rating       float32            `bson:"rating"`

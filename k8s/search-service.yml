@@ -31,7 +31,7 @@ spec:
             - name: KAFKA_BOOTSTRAP_SERVERS
               value: "my-kafka.backend.svc.cluster.local:9092"
             - name: KAFKA_AUTH_PASSWORD
-              value: "6DUnElt7GW"
+              value: "pOajD5BMEf"
 
 ---
 apiVersion: v1

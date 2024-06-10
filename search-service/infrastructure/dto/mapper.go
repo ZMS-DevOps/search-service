@@ -17,29 +17,10 @@ func MapAccommodation(accommodationId primitive.ObjectID, accommodationDto *sear
 		GuestNumber:  *mapGuestNumber(int(accommodationDto.MinGuestNumber), int(accommodationDto.MaxGuestNumber)),
 		DefaultPrice: *mapDefaultPrice(accommodationDto.DefaultPrice, accommodationDto.PriceType),
 		SpecialPrice: mapSpecialPrice(accommodationDto.SpecialPrice),
+		HostId:       accommodationDto.HostId,
 	}
 	return accommodation
 }
-
-//
-//func MapToSearchAccommodationResponse(accommodations []*domain.Accommodation) []*AccommodationResponse {
-//	var responses []*AccommodationResponse
-//
-//	for _, accommodation := range accommodations {
-//		response := &AccommodationResponse{
-//			Id:             accommodation.Id.Hex(),
-//			Name:           accommodation.Name,
-//			Location:       accommodation.Location,
-//			NumberOfGuests: accommodation.GuestNumber,
-//			MainPhoto:      accommodation.MainPhoto,
-//			Rating:         accommodation.Rating,
-//			TotalPrice:     accommodation.DefaultPrice.Price,
-//		}
-//		responses = append(responses, response)
-//	}
-//
-//	return responses
-//}
 
 func mapSpecialPrice(prices []*search.SpecialPrice) []domain.SpecialPrice {
 	if prices == nil {
