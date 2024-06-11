@@ -44,6 +44,29 @@ func (service *SearchService) Search(location string, guestNumber int, startTime
 	return filteredAccommodation, nil
 }
 
+func (service *SearchService) GetByHostId(hostId string) ([]*domain.Accommodation, error) {
+	return service.store.GetByHostId(hostId)
+}
+
+func (service *SearchService) MapToGetByHostIdResponse(accommodations []*domain.Accommodation) []domain.SearchResponse {
+	var searchResponses []domain.SearchResponse
+	for _, acc := range accommodations {
+		priceType := acc.DefaultPrice.Type
+		searchResponse := domain.SearchResponse{
+			Id:         acc.Id,
+			Name:       acc.Name,
+			Location:   acc.Location,
+			MainPhoto:  acc.MainPhoto,
+			Rating:     acc.Rating,
+			TotalPrice: acc.DefaultPrice.Price, // not displayed in get host by id
+			UnitPrice:  acc.DefaultPrice.Price,
+			PriceType:  priceType.String(),
+		}
+		searchResponses = append(searchResponses, searchResponse)
+	}
+	return searchResponses
+}
+
 func getIds(response []*domain.SearchResponse) []primitive.ObjectID {
 	accommodationIDs := make([]primitive.ObjectID, len(response))
 	for i, searchResponse := range response {

@@ -45,6 +45,14 @@ func (store *AccommodationMongoDBStore) Search(location string, guestNumber int,
 		"total_price": bson.M{
 			"$sum": dailyPrices,
 		},
+		// TODO this part is not tested - it is for setting unit_price of response
+		//"unit_price": bson.M{
+		//	"$cond": bson.A{
+		//		bson.M{"$eq": bson.A{bson.M{"$size": dailyPrices}, 0}},
+		//		0,
+		//		bson.M{"$arrayElemAt": bson.A{dailyPrices, 0}},
+		//	},
+		//},
 	}})
 
 	if minPrice > 0 || maxPrice > 0 {
@@ -68,7 +76,6 @@ func (store *AccommodationMongoDBStore) Search(location string, guestNumber int,
 	if err = cursor.All(context.TODO(), &accommodations); err != nil {
 		return nil, err
 	}
-
 	return accommodations, nil
 }
 
@@ -162,6 +169,11 @@ func (store *AccommodationMongoDBStore) InsertWithId(accommodation *domain.Accom
 	}
 	accommodation.Id = result.InsertedID.(primitive.ObjectID)
 	return nil
+}
+
+func (store *AccommodationMongoDBStore) GetByHostId(hostId string) ([]*domain.Accommodation, error) {
+	filter := bson.M{"host_id": hostId}
+	return store.filter(filter)
 }
 
 func (store *AccommodationMongoDBStore) DeleteAll() {

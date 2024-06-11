@@ -29,6 +29,17 @@ const (
 	PerGuest
 )
 
+func (p PricingType) String() string {
+	switch p {
+	case PerApartmentUnit:
+		return "perApartment"
+	case PerGuest:
+		return "perPerson"
+	default:
+		return "Unknown"
+	}
+}
+
 type DefaultPrice struct {
 	Price float32     `bson:"price"`
 	Type  PricingType `bson:"type"`
