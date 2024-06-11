@@ -13,16 +13,6 @@ type SearchHandler struct {
 	service *application.SearchService
 }
 
-//type GetAllResponse struct {
-//	//Search *domain.Search `json:"search"`
-//	Accommodations []*domain.Accommodation `json:"accommodations"`
-//}
-//
-//type SearchResponse struct {
-//	//Search *domain.Search `json:"search"`
-//	Accommodations []*domain.SearchResponse `json:"accommodations"`
-//}
-
 type HealthCheckResponse struct {
 	Size string `json:"size"`
 }
@@ -35,8 +25,8 @@ func NewSearchHandler(service *application.SearchService) *SearchHandler {
 }
 
 func (handler *SearchHandler) Init(router *mux.Router) {
-	router.HandleFunc(`/search/search/all`, handler.GetAll).Methods("GET")
 	router.HandleFunc("/search/all", handler.Search).Methods("POST")
+	router.HandleFunc("/search/{id}", handler.GetByHostId).Methods("POST")
 	router.HandleFunc("/search/health", handler.GetHealthCheck).Methods("GET")
 }
 
@@ -53,6 +43,27 @@ func (handler *SearchHandler) GetAll(w http.ResponseWriter, r *http.Request) {
 		w.WriteHeader(http.StatusInternalServerError)
 		return
 	}
+	w.WriteHeader(http.StatusOK)
+	w.Write(jsonResponse)
+}
+
+func (handler *SearchHandler) GetByHostId(w http.ResponseWriter, r *http.Request) {
+	vars := mux.Vars(r)
+	hostId := vars["id"]
+	accommodations, err := handler.service.GetByHostId(hostId)
+	if err != nil {
+		w.WriteHeader(http.StatusInternalServerError)
+		return
+	}
+
+	responses := handler.service.MapToGetByHostIdResponse(accommodations)
+
+	jsonResponse, err := json.Marshal(responses)
+	if err != nil {
+		w.WriteHeader(http.StatusInternalServerError)
+		return
+	}
+
 	w.WriteHeader(http.StatusOK)
 	w.Write(jsonResponse)
 }

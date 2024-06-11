@@ -24,10 +24,10 @@ jobs:
       - name: Setup Go
         uses: actions/setup-go@v5
         with:
-         go-version-file: 'search-service/go.mod'
+         go-version-file: './go.mod'
          check-latest: true
          cache-dependency-path: |
-           search-service/go.mod
+           ./go.mod
    
       - name: Cache go modules
         uses: actions/cache@v4
