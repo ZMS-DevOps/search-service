@@ -26,7 +26,7 @@ func NewSearchHandler(service *application.SearchService) *SearchHandler {
 
 func (handler *SearchHandler) Init(router *mux.Router) {
 	router.HandleFunc("/search/all", handler.Search).Methods("POST")
-	router.HandleFunc("/search/{id}", handler.GetByHostId).Methods("POST")
+	router.HandleFunc("/search/{id}", handler.GetByHostId).Methods("GET")
 	router.HandleFunc("/search/health", handler.GetHealthCheck).Methods("GET")
 }
 
