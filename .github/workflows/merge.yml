@@ -91,7 +91,7 @@ jobs:
       uses: anothrNick/github-tag-action@v1
       env:
         GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-        WITH_V: false
+        WITH_V: true
         MAJOR_STRING_TOKEN: breaking-change
         MINOR_STRING_TOKEN: feat
         PATCH_STRING_TOKEN: fix
