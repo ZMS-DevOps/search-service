@@ -30,17 +30,35 @@ func (service *SearchService) GetAll() ([]*domain.Accommodation, error) {
 }
 
 func (service *SearchService) Search(location string, guestNumber int, startTime time.Time, endTime time.Time, minPrice float32, maxPrice float32) ([]*domain.SearchResponse, error) {
+	log.Printf("Before search")
 	accommodation, err := service.store.Search(location, guestNumber, startTime, endTime, minPrice, maxPrice)
+	searchResponses := []*domain.SearchResponse{}
+	for _, accommodation := range accommodation {
+		log.Printf("Search accommodation: %v", accommodation)
+		log.Printf("Search accommodation2: %s", accommodation.DefaultPrice.Type)
+		searchResponse := &domain.SearchResponse{
+			Id:         accommodation.Id,
+			HostId:     accommodation.HostId,
+			Location:   accommodation.Location,
+			Rating:     accommodation.Rating,
+			Name:       accommodation.Name,
+			TotalPrice: service.CalculateTotalPrice(accommodation, startTime, endTime, guestNumber),
+			UnitPrice:  accommodation.DefaultPrice.Price,
+			PriceType:  accommodation.DefaultPrice.Type.String(),
+		}
+		searchResponses = append(searchResponses, searchResponse)
+		log.Printf("Search response: %v", searchResponse)
+	}
 	if err != nil {
 		return nil, err
 	}
 
-	availableIds, err := external.FilterAvailableAccommodation(service.bookingClient, getIds(accommodation), startTime, endTime)
+	availableIds, err := external.FilterAvailableAccommodation(service.bookingClient, getIds(searchResponses), startTime, endTime)
 	if err != nil {
 		return nil, err
 	}
 
-	filteredAccommodation := filterAccommodationsByIds(accommodation, availableIds.AccommodationIds)
+	filteredAccommodation := filterAccommodationsByIds(searchResponses, availableIds.AccommodationIds)
 	return filteredAccommodation, nil
 }
 
@@ -54,17 +72,44 @@ func (service *SearchService) MapToGetByHostIdResponse(accommodations []*domain.
 		priceType := acc.DefaultPrice.Type
 		searchResponse := domain.SearchResponse{
 			Id:         acc.Id,
+			HostId:     acc.HostId,
 			Name:       acc.Name,
 			Location:   acc.Location,
 			MainPhoto:  acc.MainPhoto,
 			Rating:     acc.Rating,
-			TotalPrice: acc.DefaultPrice.Price, // not displayed in get host by id
+			TotalPrice: acc.DefaultPrice.Price,
 			UnitPrice:  acc.DefaultPrice.Price,
 			PriceType:  priceType.String(),
 		}
 		searchResponses = append(searchResponses, searchResponse)
 	}
 	return searchResponses
+}
+
+func (service *SearchService) CalculateTotalPrice(accommodation *domain.Accommodation, startDate time.Time, endDate time.Time, numberOfGuests int) float32 {
+	var totalPrice = float32(0)
+	days := int(endDate.Sub(startDate).Hours() / 24)
+	coefficient := float32(1)
+	if accommodation.DefaultPrice.Type == domain.PerGuest {
+		coefficient = float32(numberOfGuests)
+	}
+	for i := 0; i < days; i++ {
+		date := startDate.Add(time.Hour * 24 * time.Duration(i))
+		totalPrice += service.GetPriceForDate(date, accommodation.DefaultPrice.Price, accommodation.SpecialPrice) * coefficient
+		log.Printf("Total price: %f", totalPrice)
+	}
+	return totalPrice
+}
+
+func (service *SearchService) GetPriceForDate(date time.Time, defaultPrice float32, specialPrices []domain.SpecialPrice) float32 {
+	log.Printf("Search: %v", date)
+	for _, specialPrice := range specialPrices {
+		log.Printf("Search accommodation: %v", specialPrice)
+		if !date.Before(specialPrice.DateRange.Start) && date.Before(specialPrice.DateRange.End) {
+			return specialPrice.Price
+		}
+	}
+	return defaultPrice
 }
 
 func getIds(response []*domain.SearchResponse) []primitive.ObjectID {

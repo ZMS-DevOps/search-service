@@ -6,6 +6,7 @@ import (
 
 type SearchResponse struct {
 	Id         primitive.ObjectID `json:"id" bson:"_id"`
+	HostId     string             `json:"host_id"`
 	Name       string             `json:"name"`
 	Location   string             `json:"location"`
 	MainPhoto  string             `json:"main_photo"`
