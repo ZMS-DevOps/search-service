@@ -32,9 +32,9 @@ const (
 func (p PricingType) String() string {
 	switch p {
 	case PerApartmentUnit:
-		return "perApartment"
+		return "PerApartmentUnit"
 	case PerGuest:
-		return "perPerson"
+		return "PerGuest"
 	default:
 		return "Unknown"
 	}

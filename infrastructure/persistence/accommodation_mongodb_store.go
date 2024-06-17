@@ -25,7 +25,7 @@ func NewAccommodationMongoDBStore(client *mongo.Client) domain.AccommodationStor
 	}
 }
 
-func (store *AccommodationMongoDBStore) Search(location string, guestNumber int, startDate, endDate time.Time, minPrice, maxPrice float32) ([]*domain.SearchResponse, error) {
+func (store *AccommodationMongoDBStore) Search(location string, guestNumber int, startDate, endDate time.Time, minPrice, maxPrice float32) ([]*domain.Accommodation, error) {
 	pipeline := bson.A{}
 
 	if location != "" {
@@ -39,32 +39,16 @@ func (store *AccommodationMongoDBStore) Search(location string, guestNumber int,
 		}})
 	}
 
-	dailyPrices := calculateDailyPrices(startDate, endDate, guestNumber)
-	pipeline = append(pipeline, bson.M{"$addFields": bson.M{
-		"daily_prices": dailyPrices,
-		"total_price": bson.M{
-			"$sum": dailyPrices,
-		},
-		// TODO this part is not tested - it is for setting unit_price of response
-		//"unit_price": bson.M{
-		//	"$cond": bson.A{
-		//		bson.M{"$eq": bson.A{bson.M{"$size": dailyPrices}, 0}},
-		//		0,
-		//		bson.M{"$arrayElemAt": bson.A{dailyPrices, 0}},
-		//	},
-		//},
-	}})
-
-	if minPrice > 0 || maxPrice > 0 {
-		priceMatch := bson.M{}
-		if minPrice > 0 {
-			priceMatch["$gte"] = minPrice
-		}
-		if maxPrice > 0 {
-			priceMatch["$lte"] = maxPrice
-		}
-		pipeline = append(pipeline, bson.M{"$match": bson.M{"total_price": priceMatch}})
-	}
+	//if minPrice > 0 || maxPrice > 0 {
+	//	priceMatch := bson.M{}
+	//	if minPrice > 0 {
+	//		priceMatch["$gte"] = minPrice
+	//	}
+	//	if maxPrice > 0 {
+	//		priceMatch["$lte"] = maxPrice
+	//	}
+	//	pipeline = append(pipeline, bson.M{"$match": bson.M{"total_price": priceMatch}})
+	//}
 
 	cursor, err := store.accommodations.Aggregate(context.TODO(), pipeline)
 	if err != nil {
@@ -72,7 +56,7 @@ func (store *AccommodationMongoDBStore) Search(location string, guestNumber int,
 	}
 	defer cursor.Close(context.TODO())
 
-	var accommodations []*domain.SearchResponse
+	var accommodations []*domain.Accommodation
 	if err = cursor.All(context.TODO(), &accommodations); err != nil {
 		return nil, err
 	}

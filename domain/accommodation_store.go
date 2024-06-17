@@ -16,7 +16,7 @@ type AccommodationStore interface {
 	UpdateDefaultPrice(id primitive.ObjectID, price *float64) error
 	UpdateSpecialPrice(id primitive.ObjectID, newSpecialPrices []SpecialPrice) error
 	GetSpecialPrices(id primitive.ObjectID) ([]SpecialPrice, error)
-	Search(location string, guestNumber int, startDate time.Time, endDate time.Time, minPrice float32, maxPrice float32) ([]*SearchResponse, error)
+	Search(location string, guestNumber int, startDate time.Time, endDate time.Time, minPrice float32, maxPrice float32) ([]*Accommodation, error)
 	UpdateRating(accommodationId primitive.ObjectID, rating float32) error
 	GetByHostId(hostId string) ([]*Accommodation, error)
 }

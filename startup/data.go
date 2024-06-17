@@ -37,7 +37,7 @@ var accommodations = []*domain.Accommodation{
 		SpecialPrice: []domain.SpecialPrice{},
 	},
 	{
-		Id:           getObjectId("gg43bdc7240f80f13b5d24e9"),
+		Id:           getObjectId("1143bdc7240f80f13b5d24e9"),
 		Name:         "Balinese Bungalow",
 		Location:     "Bali",
 		MainPhoto:    "photo34.jpg",
@@ -47,7 +47,7 @@ var accommodations = []*domain.Accommodation{
 		SpecialPrice: []domain.SpecialPrice{},
 	},
 	{
-		Id:           getObjectId("hh43bdc7240f80f13b5d25e0"),
+		Id:           getObjectId("2243bdc7240f80f13b5d25e0"),
 		Name:         "Cliffside Retreat",
 		Location:     "Bali",
 		MainPhoto:    "photo37.jpg",
@@ -57,7 +57,7 @@ var accommodations = []*domain.Accommodation{
 		SpecialPrice: []domain.SpecialPrice{},
 	},
 	{
-		Id:           getObjectId("ii43bdc7240f80f13b5d26e1"),
+		Id:           getObjectId("3343bdc7240f80f13b5d26e1"),
 		Name:         "Ubud Villa",
 		Location:     "Bali",
 		MainPhoto:    "photo40.jpg",
@@ -87,7 +87,7 @@ var accommodations = []*domain.Accommodation{
 		SpecialPrice: []domain.SpecialPrice{},
 	},
 	{
-		Id:           getObjectId("jj43bdc7240f80f13b5d27e2"),
+		Id:           getObjectId("4443bdc7240f80f13b5d27e2"),
 		Name:         "Central Park Apartment",
 		Location:     "New York",
 		MainPhoto:    "photo43.jpg",
@@ -97,7 +97,7 @@ var accommodations = []*domain.Accommodation{
 		SpecialPrice: []domain.SpecialPrice{},
 	},
 	{
-		Id:           getObjectId("kk43bdc7240f80f13b5d28e3"),
+		Id:           getObjectId("5543bdc7240f80f13b5d28e3"),
 		Name:         "Brooklyn Brownstone",
 		Location:     "New York",
 		MainPhoto:    "photo46.jpg",
@@ -107,7 +107,7 @@ var accommodations = []*domain.Accommodation{
 		SpecialPrice: []domain.SpecialPrice{},
 	},
 	{
-		Id:           getObjectId("ll43bdc7240f80f13b5d29e4"),
+		Id:           getObjectId("6643bdc7240f80f13b5d29e4"),
 		Name:         "Times Square Studio",
 		Location:     "New York",
 		MainPhoto:    "photo49.jpg",
