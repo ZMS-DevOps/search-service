@@ -4,21 +4,29 @@ go 1.22
 
 require (
 	github.com/ZMS-DevOps/booking-service v1.0.7
+	github.com/afiskon/promtail-client v0.0.0-20190305142237-506f3f921e9c
 	github.com/confluentinc/confluent-kafka-go/v2 v2.4.0
 	github.com/go-playground/validator/v10 v10.20.0
 	github.com/gorilla/mux v1.8.1
 	github.com/grpc-ecosystem/grpc-gateway/v2 v2.16.0
 	go.mongodb.org/mongo-driver v1.8.4
+	go.opentelemetry.io/otel v1.19.0
+	go.opentelemetry.io/otel/exporters/jaeger v1.17.0
+	go.opentelemetry.io/otel/sdk v1.19.0
+	go.opentelemetry.io/otel/trace v1.19.0
 	google.golang.org/grpc v1.62.1
 	google.golang.org/protobuf v1.33.0
 )
 
 require (
 	github.com/gabriel-vasile/mimetype v1.4.3 // indirect
+	github.com/go-logr/logr v1.2.4 // indirect
+	github.com/go-logr/stdr v1.2.2 // indirect
 	github.com/go-playground/locales v0.14.1 // indirect
 	github.com/go-playground/universal-translator v0.18.1 // indirect
 	github.com/golang/protobuf v1.5.4 // indirect
 	github.com/leodido/go-urn v1.4.0 // indirect
+	go.opentelemetry.io/otel/metric v1.19.0 // indirect
 	golang.org/x/net v0.22.0 // indirect
 	golang.org/x/sys v0.18.0 // indirect
 	google.golang.org/genproto/googleapis/api v0.0.0-20240318140521-94a12d6c2237 // indirect
