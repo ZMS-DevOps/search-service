@@ -10,8 +10,10 @@ import (
 	"github.com/ZMS-DevOps/search-service/infrastructure/persistence"
 	accommodationSearch "github.com/ZMS-DevOps/search-service/proto"
 	"github.com/ZMS-DevOps/search-service/startup/config"
+	"github.com/afiskon/promtail-client/promtail"
 	"github.com/gorilla/mux"
 	"go.mongodb.org/mongo-driver/mongo"
+	sdktrace "go.opentelemetry.io/otel/sdk/trace"
 	"google.golang.org/grpc"
 	"log"
 	"net"
@@ -24,12 +26,16 @@ type Server struct {
 	SearchHandler            *api.SearchHandler
 	AccommodationGrpcHandler *api.AccommodationGrpcHandler
 	AccommodationHandler     *api.AccommodationHandler
+	traceProvider            *sdktrace.TracerProvider
+	loki                     promtail.Client
 }
 
-func NewServer(config *config.Config) *Server {
+func NewServer(config *config.Config, traceProvider *sdktrace.TracerProvider, loki promtail.Client) *Server {
 	server := &Server{
-		config: config,
-		router: mux.NewRouter(),
+		config:        config,
+		router:        mux.NewRouter(),
+		traceProvider: traceProvider,
+		loki:          loki,
 	}
 	server.SearchHandler, server.AccommodationGrpcHandler, server.AccommodationHandler = server.setupHandlers()
 	return server
@@ -91,21 +97,21 @@ func (server *Server) startGrpcServer(bookingHandler *api.AccommodationGrpcHandl
 }
 
 func (server *Server) initSearchService(store domain.AccommodationStore, bookingClient booking.BookingServiceClient) *application.SearchService {
-	return application.NewSearchService(store, bookingClient)
+	return application.NewSearchService(store, bookingClient, server.traceProvider, server.loki)
 }
 
 func (server *Server) initAccommodationService(store domain.AccommodationStore) *application.AccommodationService {
-	return application.NewAccommodationService(store)
+	return application.NewAccommodationService(store, server.loki)
 }
 
 func (server *Server) initSearchHandler(service *application.SearchService) *api.SearchHandler {
-	return api.NewSearchHandler(service)
+	return api.NewSearchHandler(service, server.traceProvider, server.loki)
 }
 
 func (server *Server) initAccommodationGrpcHandler(service *application.AccommodationService) *api.AccommodationGrpcHandler {
-	return api.NewAccommodationGrpcHandler(service)
+	return api.NewAccommodationGrpcHandler(service, server.traceProvider, server.loki)
 }
 
 func (server *Server) initAccommodationHandler(service *application.AccommodationService) *api.AccommodationHandler {
-	return api.NewAccommodationHandler(service)
+	return api.NewAccommodationHandler(service, server.traceProvider, server.loki)
 }

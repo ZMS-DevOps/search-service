@@ -13,6 +13,8 @@ type Config struct {
 	BookingPort       string
 	BootstrapServers  string
 	KafkaAuthPassword string
+	JaegerHost        string
+	LokiHost          string
 }
 
 func NewConfig() *Config {
@@ -27,5 +29,7 @@ func NewConfig() *Config {
 		BookingPort:       os.Getenv("BOOKING_PORT"),
 		BootstrapServers:  os.Getenv("KAFKA_BOOTSTRAP_SERVERS"),
 		KafkaAuthPassword: os.Getenv("KAFKA_AUTH_PASSWORD"),
+		JaegerHost:        os.Getenv("JAEGER_ENDPOINT"),
+		LokiHost:          os.Getenv("LOKI_ENDPOINT"),
 	}
 }
